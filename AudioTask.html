@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="audio.css">
+</head>
+<body>
+    <div class="container">
+        <img id="image" src="" alt="">
+        <p id="name"></p>
+        <audio id="audio" src=""></audio>
+        
+        <div  class="range-controls">
+            <div class="progress-range">
+                <input type="range" id="progress" min="0" value="0" max="100">
+            </div>
+            
+            <div class="volume-range">
+                <input type="range" id="volume" step="0.01" min="0" value="1" max="1">
+                <label for="volume"><i id="mute" class="fa fa-volume-up" aria-hidden="true"></i></label>
+            </div>
+        </div>
+        <div class="controls">
+            <i id="prev" class="fa fa-backward" aria-hidden="true"></i>
+            <i id="play" class="fa fa-play" aria-hidden="true"></i>
+            <i id="pause" class="fa fa-pause" aria-hidden="true"></i>
+            <i id="stop" class="fa fa-stop" aria-hidden="true"></i>
+            <i id="next" class="fa fa-forward" aria-hidden="true"></i>
+        </div>
+
+
+    <script>
+        const songs = [
+        {name: "Sky fall",src: "Audios/Adele - Skyfall.mp3",img: "Audios/Adele - Sky fall.jpg"},
+        {name: "Believer",src: "Audios/Imagine Dragons - Believer.mp3",img: "Audios/believer.jpg"},
+        {name: "Demons",src: "Audios/Imagine Dragons - Demons.mp3",img: "Audios/Demons.jpeg"},
+        {name: "Thunder",src: "Audios/Imagine Dragons - Thunder.mp3",img: "Audios/thunder.jpeg"}];
+
+
+        let audio = document.getElementById("audio");
+        let name = document.getElementById("name");
+        let image = document.getElementById("image");
+        
+        let play = document.getElementById("play");
+        let pause = document.getElementById("pause");
+        let stop = document.getElementById("stop");
+        let prev = document.getElementById("prev");
+        let next= document.getElementById("next");
+        let mute = document.getElementById("mute");
+        
+        let volume = document.getElementById("volume");
+        let progress = document.getElementById("progress");
+        
+        
+        let currentSongIndex = 0;
+        const loadSong = (index) => {
+            let song = songs[index];
+            name.innerText = song.name;
+            image.src = song.img;
+            audio.src = song.src;
+            audio.load();
+        };
+
+        loadSong(currentSongIndex);
+
+
+        play.addEventListener("click" , () => {
+            audio.play();
+        })
+
+        pause.addEventListener("click" , () => {
+            audio.pause();
+        })
+
+        stop.addEventListener("click" , () => {
+            audio.pause();
+            audio.currentTime = 0;
+        })
+        prev.addEventListener("click", () => {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+            audio.play();
+        });
+
+        next.addEventListener("click", () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(currentSongIndex);
+            audio.play();
+        });
+
+        mute.addEventListener("click", () => {
+            audio.muted = !audio.muted;
+            mute.className = audio.muted ? "fa fa-volume-off" : "fa fa-volume-up";
+        });
+
+        volume.addEventListener("input", () => {
+            audio.volume = volume.value; 
+        });
+
+        audio.addEventListener("timeupdate", () => {
+            let progressPercent = (audio.currentTime / audio.duration) * 100;
+            progress.value = progressPercent 
+        });
+            
+        progress.addEventListener("input", () => {
+            const durationTime = (progress.value / 100) * audio.duration;
+        audio.currentTime = durationTime;
+        });
+
+        audio.addEventListener("ended", () => {
+            next.click();
+        });
+    </script>
+</body>
+</html>
